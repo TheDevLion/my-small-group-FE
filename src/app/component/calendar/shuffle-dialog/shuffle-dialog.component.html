@@ -1,0 +1,22 @@
+<div id="dialog_container">
+    
+    <header>
+        <h3>{{intl.translate("dialog_title_shuffle")}}</h3>
+        <span class="material-symbols-outlined" (click)="closeDialog()" id="close">close</span>
+    </header>
+    
+
+    <section class="dialog_content">
+        <!-- YOUR CONTENT GOES IN HERE -->
+        <p *ngFor="let row of description">
+            <span *ngIf="row.length === 1">{{row}}</span>
+            <span *ngIf="row.length === 0"></span>
+            <span *ngIf="row.length === 2">
+                <b>{{row[0]}}</b>
+                <span>{{connector}}</span>
+                <b>{{row[1]}}</b>
+            </span>
+        </p>
+    </section>
+
+</div>

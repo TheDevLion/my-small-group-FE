@@ -1,0 +1,144 @@
+section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;   
+    padding-bottom: 50px;
+    /* height: 20vh;  */
+}
+
+
+div#calendar_box_wrapper {
+    /* height: 25vh; */
+    /* border: 1px solid black; */
+}
+
+div#calendar_box {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+div.day_box:nth-child(7n) {
+    /* background: red; */
+}
+div.day_box {
+    width: 12.5%;
+    /* height: 15px; */
+    background: var(--blue);
+    color: white;
+    border: 1px solid black;
+    margin: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+}
+div.day_box p{
+    font-weight: 700;
+}
+
+.reference_day {
+    background: yellow !important;
+    color: black !important;
+}
+
+.excess { background: rgba(53,92,125,.6) !important; }
+
+div#calendar_box_header {
+    display: flex;
+    gap: 40px;
+    margin: 10px 0px;
+}
+
+div#calendar_box_header h3 {
+    cursor: default;
+}
+
+div#calendar_box_header button {
+    padding: 0px 20px;
+    cursor: pointer;
+    font-weight: 700;
+    background: var(--pink);
+    font-size: 1.2em;
+    border: 1px solid var(--wine);
+}
+
+div#buttons_table_manage_participant {
+    position: fixed;
+    z-index: 10;
+    display: flex;
+    gap: 10px;
+    bottom: 100px;
+    justify-content: space-around;
+    align-items: center;
+    left: 0px;
+    width: 100%;
+}
+
+div#buttons_table_manage_participant span:nth-child(1){
+    position: fixed;
+    right: 10px;
+}
+
+div#buttons_table_manage_participant span {
+    cursor: pointer;
+    background: var(--blue);
+    border-radius: 50%;
+    padding: 4px;
+    font-size: 1.5em;
+    color: var(--bege);
+    font-weight: 700;
+}
+
+
+
+div#day_activities{
+    text-align:center;    
+    /* border: 1px solid black; */
+    width: 90%;
+    /* height: 35vh; */
+    overflow-y: auto;
+    margin: 15px;
+}
+
+table#day_activities_table {
+}
+
+div#day_activities h3 {
+    margin: 10px 0px;
+}
+
+div#day_activities table {
+    width: 100%;
+}
+
+div#day_activities table, div#day_activities td, div#day_activities th, div#day_activities table tr {
+    border: 1px solid black;
+    background: var(--bege);
+}
+
+div#day_activities td, div#day_activities th {
+    padding: 5px 10px;
+    text-align: center;
+}
+
+div#day_activities th {
+    background: var(--pink);
+    width: 50%;
+}
+
+div#day_activities td {
+    width: 50%;
+}
+
+div#day_activities td span {
+    cursor: pointer;
+}
+
+span.event_today {
+    font-size: 0.9em;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}

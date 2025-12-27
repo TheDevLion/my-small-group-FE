@@ -1,0 +1,44 @@
+<div id="buttons_table_manage_participant">
+    <span class="material-symbols-outlined" (click)="addNewEvent()" id="add_event">add_circle</span>
+</div>
+
+<section>
+    <div id="calendar_box_header">
+        <button (click)="addMonth(-1)">&lt;&lt;</button>
+        <h3>{{formatMonthYear(this.referenceDate)}}</h3>
+        <button (click)="addMonth(1)">&gt;&gt;</button>
+    </div>
+
+    <div style="display: flex;" id="calendar_box_wrapper">
+        <div id="calendar_box">
+            <div *ngFor="let day of daysLabels; let i=index" [class]="isItExcess(i) ? 'day_box excess' : isItReferenceDay(day) ? 'day_box reference_day' : 'day_box'" (click)="handleCalendarClick(day)">
+                <p *ngIf="day !== '-'">
+                    {{day}}
+                </p>
+                <span class="material-symbols-outlined event_today" *ngIf="isThereEventToday(day)">local_activity</span>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <div id="day_activities">
+        <!-- <h3>{{formatTitleDate()}}</h3> -->
+        <table id="day_activities_table">
+            <tr>
+                <th>{{intl.translate("events_manager_title")}}</th>
+                <th>{{intl.translate("events_manager_description")}}</th>
+                <th>{{intl.translate("events_view_edit")}}</th>
+                <th>{{intl.translate("events_view_delete")}}</th>
+            </tr>
+            <tr *ngFor="let event of dayEvents">
+                <td>{{event.title}}</td>
+                <td (click)="openDescModal(event)"><span class="material-symbols-outlined">description</span></td>
+                <td (click)="editEvent(event)"><span class="material-symbols-outlined">edit</span></td>
+                <td (click)="deleteEvent(event)"><span class="material-symbols-outlined">delete</span></td>
+            </tr>
+        </table>
+    </div>
+</section>
+
+

@@ -1,0 +1,8 @@
+span#fullscreen {
+    position: fixed;
+    z-index: 12;
+    top: 2px;
+    background: rgba(0,0,0,0);
+    right: 2px;
+    cursor: pointer;
+}
