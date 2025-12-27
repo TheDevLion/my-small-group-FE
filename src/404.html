@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>MySmallGroup</title>
+    <script>
+      // GitHub Pages SPA fallback: redirect 404s to index.html with the original path.
+      (function () {
+        var segmentCount = 1;
+        var l = window.location;
+        var repoBase = l.pathname.split('/').slice(0, 1 + segmentCount).join('/');
+        var path = l.pathname.split('/').slice(1 + segmentCount).join('/');
+        var newUrl = l.protocol + '//' + l.host + repoBase + '/?/' + path;
+        if (l.search) {
+          newUrl += l.search.replace('&', '~and~');
+        }
+        if (l.hash) {
+          newUrl += l.hash;
+        }
+        l.replace(newUrl);
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>

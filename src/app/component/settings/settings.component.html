@@ -1,0 +1,53 @@
+<main>
+
+    
+    <!-- Title Management -->
+    <span class="material-symbols-outlined rotate-always" id="title_loading" *ngIf="isUpdatingTitle">progress_activity</span>        
+    <span class="material-symbols-outlined edit_title" (click)="updateAll()" id="save_button">save</span>
+    
+    <div>        
+        <h3>{{intl.translate("settings_group_title")}}</h3>
+
+        <div>
+            <input 
+                id="edit_title_input" 
+                type="text"
+                [(ngModel)]="newGroupTitle"
+                [size]="newGroupTitle ? newGroupTitle.length : 20"
+                (keypress)="handleSmallGroupTitleTyping($event)"
+                #editTitleInput
+            />
+        </div>
+    </div>
+
+    <hr />
+
+    <!-- Languages -->
+    <div id="flags">
+        <img class="language" (click)="changeLanguage('pt-br')" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/1280px-Flag_of_Brazil.svg.png"/>
+        <img class="language" (click)="changeLanguage('en-us')" src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/1280px-Flag_of_the_United_States.svg.png"/>
+    </div>
+
+    <hr />
+
+    <!-- Shuffle Config -->
+
+    <div id="shuffle_config">
+
+        <label>
+            {{intl.translate("settings_shuffle_event_connector")}}
+            <input type="text" [(ngModel)]="group.template['shuffle_connector_word']" #editTemplateInput/>
+        </label>
+
+        <label>
+            {{intl.translate("settings_shuffle_dialog_font_size")}}
+            <input type="text" [(ngModel)]="group.template['shuffle_dialog_font_size']" #editFontSizeInput/>
+        </label>
+    </div>
+    <hr />
+
+    <!-- Log Out -->    
+    <span class="material-symbols-outlined" (click)="logout()" id="logout">logout</span>
+    
+
+</main>

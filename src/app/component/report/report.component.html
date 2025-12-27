@@ -1,0 +1,47 @@
+<!-- Filters -->
+
+<header id="report_filters">
+    <div class="report_filters_line">
+        <label id="report_filter_name_flag">
+            {{intl.translate("report_filter_fullname_flag")}}
+            <input type="checkbox" [(ngModel)]="fullnameFlag"/>
+        </label>
+
+        <label>
+            {{intl.translate("report_filter_start_date")}}
+            <input type="date" [(ngModel)]="filterStartDate"/>
+        </label>
+    
+        <label>
+            {{intl.translate("report_filter_final_date")}}
+            <input type="date" [(ngModel)]="filterFinalDate"/>
+        </label>
+    </div>
+
+    <!-- <div class="report_filters_line">
+    </div> -->
+
+    <span (click)="applyFiltersSearch()" class="material-symbols-outlined">search</span>
+</header>
+
+
+<!-- Content -->
+
+<section id="report_results">
+    <table>
+        <tr>
+            <th class="fixed"></th>            
+            <th class="fixed" *ngFor="let event of this.eventsToShow">{{eventDate(event)}}</th>
+        </tr>
+
+        <tr *ngFor="let participant of this.group.participants">
+                <td class="fixed">{{fullnameFlag ? participant.name : participant.alias}} ({{frequencyStatus(participant)}})</td>
+                <td *ngFor="let event of this.eventsToShow" [class]="participantWasPresentInEvent(participant, event)"></td>
+        </tr>
+
+        <tr>
+            <th class="fixed"></th>            
+            <th class="fixed" *ngFor="let event of this.eventsToShow">{{event.presence.length}}</th>
+        </tr>
+    </table>
+</section>

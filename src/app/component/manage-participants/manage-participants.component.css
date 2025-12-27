@@ -1,0 +1,106 @@
+div#participants_table {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* height: 85vh; */
+}
+
+
+
+div.participant_box {
+    margin: 5px 0px;
+    border: 1px solid black;
+    width: 90%;
+    text-align: center;
+    font-size: 1.2em;
+    position: relative;
+}
+
+div.participant_box input, div.participant_box select {
+    text-align: center;
+    background: rgba(246, 114, 128, .2);
+    font-weight: 700;
+    border: 0px;
+    cursor: pointer;
+    font-size: 1em;
+    width: 90%;
+}
+
+div.participant_box span {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+div.participant_line {
+    display: flex;
+    width: 100%;
+    margin-bottom: 3px;    
+    padding: 3px;
+}
+
+div.p_thirty {width: 30%; text-align: right;}
+div.p_seventy {width: 70%}
+
+div.participant_box input:focus {
+    outline: 2px solid var(--wine);
+}
+
+
+
+/* border: 1px solid black; */
+div#buttons_table_manage_participant {    
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 5px;
+}
+
+div#buttons_table_manage_participant span {
+    margin: 0px 50px;
+}
+
+span.rotate-always {
+    position: relative !important;    
+}
+
+div#participants_table {
+    border-bottom: 2px solid var(--wine);
+    overflow-y: auto;
+    padding-bottom: 100px;
+}
+ 
+
+
+div#buttons_table_manage_participant span {
+    cursor: pointer;
+    background: var(--blue);
+    border-radius: 50%;
+    padding: 4px;
+    font-size: 1.5em;
+    color: var(--bege);
+    font-weight: 700;
+}
+
+div#buttons_table_manage_participant span.button_disabled {
+    cursor: default;
+    background: var(--dark-pink);
+}
+
+
+select.role_select {
+    text-align: center;
+    background: rgba(246, 114, 128, .2);
+    cursor: pointer;
+    width: 120px;
+}
+select.role_select:focus {
+    outline: 2px solid var(--wine);
+}
+
+td.rowspan3 {
+    vertical-align: middle;
+}
+

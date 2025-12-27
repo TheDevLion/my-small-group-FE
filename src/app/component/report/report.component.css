@@ -1,0 +1,107 @@
+/* Filters */
+
+header#report_filters {
+    /* border: 1px solid black; */
+    width: 100%;
+    /* height: 25vh; */
+    margin-bottom: 20px;
+    /* overflow: hidden; */
+    position: relative;
+}
+
+header#report_filters label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px;
+}
+
+header#report_filters label input {
+    text-align: center;
+}
+
+header#report_filters div.report_filters_line {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+header#report_filters div.report_filters_line label#report_filter_name_flag {
+    width: 50px;
+    text-align: center;    
+}
+
+header#report_filters span {
+    position: absolute;
+    bottom: -30px;
+    right: 10px;
+    cursor: pointer;
+    background: var(--blue);
+    border-radius: 50%;
+    padding: 5px;
+    font-size: 2em;
+    color: var(--bege);
+    font-weight: 700;
+    font-size: 1.5em;
+}
+
+header#report_filters div.report_filters_line label input {
+    text-align: center;
+    background: rgba(246, 114, 128, .2);
+    font-weight: 700;
+    border: 1px solid var(--wine);
+    cursor: pointer;
+    font-size: 1em;
+    width: 90%;
+}
+
+
+
+/* Content */
+
+.presence {
+    background: green;
+}
+.absent {
+    background: red;
+}
+
+.none {
+    display: none;
+}
+
+section#report_results {
+    width: 90%;
+    overflow-y: auto;
+    margin: 0 auto;
+    height: 70vh;
+    /* border: 1px solid var(--wine); */
+    display: flex;
+    justify-content: center;
+}
+
+
+
+section#report_results table tr td{
+    height: 30px;
+    border: 1px solid var(--pink);    
+    text-align: center;
+    font-size: 0.8em;
+    padding:1px;
+}    
+
+section#report_results table tr th {
+    position: sticky;
+    top: 0;
+    background: var(--blue);
+    color: white;
+    font-size: 0.8em;
+    padding:1px;
+}
+
+.fixed { 
+    position: sticky !important; 
+    background: var(--blue);
+    color: white;
+    left: 0
+}

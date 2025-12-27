@@ -1,0 +1,15 @@
+<main>
+    <h1>MySmallGroup - Login</h1>
+
+    <form>
+        <div>
+            <label>{{intl.translate("login_password")}} <input [type]="inputType" [(ngModel)]="passcode" name="passcode"/></label>
+            <span class="material-symbols-outlined" (click)="toggleInput($event)">{{inputType === "password" ? "visibility" : "visibility_off"}}</span>
+        </div>
+            
+        <button (click)="loginAttempt()" [disabled]="this.passcode === ''" [class]="this.passcode === '' ? '' : 'buttonEnable'">{{intl.translate("login_entry_button")}}</button>
+    </form>
+    <span [class]="isLoading ? 'material-symbols-outlined rotate-always' : ''" id="custom_info">
+        {{isLoading ? 'progress_activity' : invalidPasswordMessage ? invalidPasswordMessage : ''}}
+    </span>
+</main>
