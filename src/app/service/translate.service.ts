@@ -7,7 +7,7 @@ export class TranslateService {
   language: string;
   
   constructor() {
-    this.language = this.getCachedLanguage() ?? 'pt-br';
+    this.language = this.getCachedLanguage() ?? 'en-us';
    }
 
   getCachedLanguage(){
