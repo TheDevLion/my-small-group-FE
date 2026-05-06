@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
 import { baseApiFetch } from '../helpers/base_request';
 
 @Injectable({
@@ -31,25 +30,15 @@ export class EventphotoService {
   async uploadAsset(asset: FormData, eventId: string){    
     asset.append("eventId", eventId);
 
-    try {
-        const response = await fetch(`${environment.apiUrl}/event-photos`, {
-            method: "POST",
-            body: asset,
-            credentials: "include",
-        });
+    const res = await baseApiFetch("/event-photos", {
+      method: "POST",
+      body: asset,
+    });
 
-        if (!response.ok) {
-            return null;
-        }
-        
-        const data = await response.json();
-        if (data?.error) {
-            return null;
-        }
-
-        return data;
-    }catch(error){
-        return null;
+    if (res?.error) {
+      return null;
     }
+
+    return res ?? null;
   }
 }

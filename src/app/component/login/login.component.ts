@@ -32,6 +32,7 @@ export class LoginComponent {
 
   async loginAttempt(){
     this.isLoading = true;
+    this.invalidPasswordMessage = "";
     
     let res = await login(this.passcode);
 
@@ -43,16 +44,17 @@ export class LoginComponent {
       this.invalidPasswordMessage = this.intl.translate("invalid_password");
       clearSessionState();
     }
-    else if (!res?.groupID){
+    else if (!res?.groupID || !res?.authToken){
       this.invalidPasswordMessage = this.intl.translate("api_unavailable");
       clearSessionState();
     }
     else{
-      this.invalidPasswordMessage = this.intl.translate("success_password");
-      saveSessionState(res.groupID);
+      saveSessionState(res.groupID, res.authToken);
       if (await this.groupService.init()){
+        this.invalidPasswordMessage = this.intl.translate("success_password");
         this.router.navigate(['/settings']);
       }else {
+        this.invalidPasswordMessage = this.intl.translate("api_unavailable");
         clearSessionState();
       }
     }
