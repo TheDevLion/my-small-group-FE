@@ -147,6 +147,6 @@ export class EventManagerComponent {
   }
 
   openPresenceModal(){
-    this.hub.notifyArgs(OPEN_DIALOG, {component: PresenceDialogComponent, data: {presence: this.event.presence, participants: this.group.participants, updatepresence: (presence: string[]) => {this.event.presence = presence}}});
+    this.hub.notifyArgs(OPEN_DIALOG, {component: PresenceDialogComponent, data: {presence: this.event.presence, participants: this.group.participants, updatePresence: (presence: string[]) => {this.event.presence = presence}}});
   }
 }

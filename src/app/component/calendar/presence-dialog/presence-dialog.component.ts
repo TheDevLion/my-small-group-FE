@@ -21,7 +21,7 @@ export class PresenceDialogComponent {
 
   constructor(private hub: HubService, public intl: TranslateService){
     this.hub.subscribe(OPEN_PRESENCE_DIALOG, (args: any) => {
-      this.presence = args.presence;
+      this.presence = [...args.presence];
       this.updatePresence = args.updatePresence;
       this.participants = args.participants;
     });
@@ -44,5 +44,7 @@ export class PresenceDialogComponent {
       this.presence = this.presence.filter(x => x !== participant.id);
     else
       this.presence.push(participant.id);
+
+    this.updatePresence([...this.presence]);
   }
 }
