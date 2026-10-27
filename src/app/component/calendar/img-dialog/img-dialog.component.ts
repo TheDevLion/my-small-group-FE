@@ -12,6 +12,7 @@ import { TranslateService } from 'src/app/service/translate.service';
 export class ImgDialogComponent {
   imgUrl: string = "";
   imgId: string = "";
+  isDeleting = false;
 
   closeDialog(){
     this.hub.notify(CLOSE_DIALOG);
@@ -25,9 +26,14 @@ export class ImgDialogComponent {
   }
 
   async deleteImg(){
-    if(confirm(this.intl.translate("prompt_confirm_img_delete"))){
-      await this.eventPhotoService.deleteImg(this.imgId);
-      this.hub.notifyArgs(CLOSE_IMG_DIALOG_DELETE, [this.imgId]);
+    if (this.isDeleting || !confirm(this.intl.translate("prompt_confirm_img_delete"))) return;
+    this.isDeleting = true;
+    try {
+      const res = await this.eventPhotoService.deleteImg(this.imgId);
+      if (res?.id) this.hub.notifyArgs(CLOSE_IMG_DIALOG_DELETE, [this.imgId]);
+      else this.intl.showError(res);
+    } finally {
+      this.isDeleting = false;
     }
   }
 }

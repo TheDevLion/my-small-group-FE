@@ -75,4 +75,15 @@ test('Failed event writes retain cache and skip uploads',async()=>{
   response={ok:true,status:200,json:async()=>({id:'g'})};
 });
 
+test('Photo retries skip successful files and resume publication without reupload',async()=>{
+  const first=new Blob(['one']); const second=new Blob(['two']); let uploads=0, publications=0;
+  const input={files:[first,second],value:'selected'};
+  const m=instance(Manager,{event:event('a'),imgUrls:[],uploadedFiles:new Set(),pendingPublications:new Map(),files:{nativeElement:input},intl:{showError(){}},eventPhotoService:{
+    uploadAsset:async()=>++uploads===1?{id:'one',url:'one'}:{id:'two',error:'publication_failed'},
+    publishImg:async id=>{publications++;return {id,url:id}}
+  }});
+  await m.saveImgs(); assert.equal(m.imgUrls.length,1); assert.equal(input.value,'selected');
+  await m.saveImgs(); assert.equal(uploads,2); assert.equal(publications,1); assert.equal(m.imgUrls.length,2); assert.equal(input.value,'');
+});
+
 (async()=>{for(const {name,run} of tests){await run(); console.log(`PASS ${name}`)}})().catch(e=>{console.error(e);process.exitCode=1});

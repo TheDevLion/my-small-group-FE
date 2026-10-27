@@ -27,7 +27,9 @@ export class EventManagerComponent {
   event: event = createEmptyEvent();  
   isSaving = false;
   shuffleViewOrUpdate = false;  
-  imgUrls: any;
+  imgUrls: {id: string, url: string}[] = [];
+  uploadedFiles = new Set<File>();
+  pendingPublications = new Map<File, string>();
   
   constructor(public groupService: GroupService, public router: Router, public intl: TranslateService, private hub: HubService, public dialog: MatDialog, private eventPhotoService: EventphotoService){
     this.hub.subscribe(EDIT_EVENT, (args: event) => {
@@ -38,28 +40,49 @@ export class EventManagerComponent {
     this.getGroup();
   }
   
-  async getImgs(){    
-    if (this.event.id && this.event.title){
-      this.imgUrls = await this.eventPhotoService.getEventPhotos(this.event.id);
-    }
+  async getImgs(){
+    const eventId = this.event.id;
+    this.imgUrls = [];
+    if (!this.group.events.some(x => x.id === eventId)) return;
+    const res = await this.eventPhotoService.getEventPhotos(eventId);
+    if (this.event.id !== eventId) return;
+    if (res?.error) this.intl.showError(res);
+    else this.imgUrls = res;
+  }
+
+  filesChanged(){
+    this.uploadedFiles.clear();
+    this.pendingPublications.clear();
   }
 
   async saveImgs(){
-    this.isSaving = true;
-    let files = this.files.nativeElement.files;
-    
-    for(let file of files){
+    const input = this.files.nativeElement as HTMLInputElement;
+    const files = Array.from(input.files ?? []);
+    let failed = false;
+    for (const file of files) {
+      if (this.uploadedFiles.has(file)) continue;
+      const pendingId = this.pendingPublications.get(file);
       const form = new FormData();
       form.append('fileUpload', file);
-      let res = await this.eventPhotoService.uploadAsset(form, this.event.id);
-      if (res?.id){
-        this.imgUrls.push(res);
+      const res = pendingId
+        ? await this.eventPhotoService.publishImg(pendingId)
+        : await this.eventPhotoService.uploadAsset(form, this.event.id);
+      if (res?.error || !res?.id) {
+        if (res?.id) this.pendingPublications.set(file, res.id);
+        failed = true;
+        continue;
       }
-    }    
-    
-    this.isSaving = false;
+      this.imgUrls = [...this.imgUrls.filter(x => x.id !== res.id), res];
+      this.uploadedFiles.add(file);
+      this.pendingPublications.delete(file);
+    }
+    if (failed) this.intl.showError({error: 'upload_failed'});
+    else {
+      input.value = '';
+      this.filesChanged();
+    }
   }
-  
+
   async getGroup(){
     if (await this.groupService.init()){
       this.group = this.groupService.group;

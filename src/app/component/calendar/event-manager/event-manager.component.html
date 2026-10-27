@@ -34,12 +34,12 @@
 
 
     <div class="event_form_line">
-        <input type="file" multiple [src]="files" class="upload_files_input" #files/>
+        <input type="file" multiple accept="image/jpeg,image/png,image/gif,image/webp" [disabled]="isSaving" (change)="filesChanged()" class="upload_files_input" #files/>
     </div>
 
     <div class="shuffle_line">
         <label>{{intl.translate("event_manager_frequency_flag")}}</label>
-        <input type="checkbox" [(ngModel)]="event.frequencyFlag" #files/>
+        <input type="checkbox" [(ngModel)]="event.frequencyFlag"/>
     </div>
 
 </section>

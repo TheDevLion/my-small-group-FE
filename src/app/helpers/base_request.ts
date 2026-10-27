@@ -31,18 +31,16 @@ export const baseApiFetch = async (path: string, options: RequestInit = {}) => {
         const response = await fetch(`${environment.apiUrl}${path}`, {
             ...options,
             headers: {
-                "Content-Type": "application/json",
+                ...(options.body instanceof FormData ? {} : {"Content-Type": "application/json"}),
                 ...(options.headers || {}),
             },
             credentials: "include",
         });
 
         if (!response.ok) {
-            if (response.status === 401) {
-                clearSessionState();
-                return { error: "unauthorized" };
-            }
-            return { error: "api_unavailable" };
+            if (response.status === 401) clearSessionState();
+            const data = await response.json().catch(() => null);
+            return data?.error ? data : {error: 'api_unavailable'};
         }
 
         if (response.status === 204) {

@@ -47,7 +47,7 @@ export class TranslateService {
     "participant_in_use": {"pt-br": "Este participante possui presenças registradas e não pode ser excluído.", "en-us": "This participant has attendance records and cannot be deleted."},
     "upload_failed": {"pt-br": "Algumas fotos não foram enviadas. Salve novamente para tentar apenas as pendentes.", "en-us": "Some photos were not uploaded. Save again to retry pending photos only."},
     "unauthorized": {"pt-br": "Sua sessão expirou. Entre novamente.", "en-us": "Your session expired. Please log in again."},
-    "publication_failed": {"pt-br": "Não foi possível publicar. Recarregue e confira os dados antes de tentar novamente.", "en-us": "Publication failed. Reload and check the data before retrying."},    
+    "publication_failed": {"pt-br": "Não foi possível publicar. Recarregue e confira os dados antes de tentar novamente.", "en-us": "Publication failed. Reload and check the data before retrying."},
     "login_password": {
       "pt-br": "Senha: ",
       "en-us": "Password: ",
