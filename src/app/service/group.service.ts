@@ -40,7 +40,8 @@ export class GroupService {
         res.participants ??= [];
         res.template ??= {};
         if (!Array.isArray(res.events) || !Array.isArray(res.participants) ||
-            res.events.some((e: any) => !e || typeof e.id !== 'string' || typeof e.dateStr !== 'string' || !Array.isArray(e.presence)) ||
+            res.events.some((e: any) => !e || typeof e.id !== 'string' || typeof e.title !== 'string' ||
+              typeof e.dateStr !== 'string' || !Array.isArray(e.presence) || e.presence.some((id: any) => typeof id !== 'string')) ||
             res.participants.some((p: any) => !p || typeof p.id !== 'string' || typeof p.name !== 'string')) return false;
         const roles = ['leader', 'member', 'guest'];
         res.participants.sort((a: participant, b: participant) =>

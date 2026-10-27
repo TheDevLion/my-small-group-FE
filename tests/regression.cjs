@@ -141,4 +141,12 @@ test('Fullscreen uses browser state including external exit',async()=>{
   context.document.fullscreenElement=null;assert.equal(screen.isFullScreen,false);await screen.toggleFullScreen();await screen.toggleFullScreen();assert.equal(screen.isFullScreen,false);
 });
 
+test('Malformed stored event is rejected before rendering',async()=>{
+  api.saveSessionState('g');
+  const service=new Group();
+  response={ok:true,status:200,json:async()=>({id:'g',name:'G',participants:[],events:[{id:'broken',dateStr:'2026-10-27',presence:[]}],template:{}})};
+  assert.equal(await service.init(),false);assert.equal(service.group.id,'');
+  response={ok:true,status:200,json:async()=>({id:'g'})};
+});
+
 (async()=>{for(const {name,run} of tests){await run(); console.log(`PASS ${name}`)}})().catch(e=>{console.error(e);process.exitCode=1});
