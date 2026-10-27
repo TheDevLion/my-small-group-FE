@@ -130,6 +130,11 @@ test('Dates reject impossible calendar dates and use local day values',()=>{
   assert.match(load('src/app/interface/event.ts').createEmptyEvent().dateStr,/^\d{4}-\d{2}-\d{2}$/);
 });
 
+test('Settings stop after failed title save and always release loading state',async()=>{
+  const Settings=component('settings/settings','SettingsComponent');let templates=0;
+  const settings=instance(Settings,{newGroupTitle:'New',group:{name:'Old',template:{}},intl:{showError(){}},groupService:{updateGroupName:async()=>({error:'conflict'}),updateTemplate:async()=>{templates++}}});
+  await settings.updateAll();assert.equal(templates,0);assert.equal(settings.group.name,'Old');assert.equal(settings.isUpdatingTitle,false);assert.equal(settings.isSavingAll,false);
+});
 test('Fullscreen uses browser state including external exit',async()=>{
   const Fullscreen=load('src/app/feature/fullscreen/fullscreen.component.ts').FullscreenComponent;const screen=new Fullscreen();
   assert.equal(screen.isFullScreen,false);await screen.toggleFullScreen();assert.equal(screen.isFullScreen,true);

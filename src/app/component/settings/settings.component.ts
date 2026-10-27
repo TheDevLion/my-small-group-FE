@@ -19,6 +19,7 @@ export class SettingsComponent {
   group: group = emptyGroup;
   newGroupTitle = "";
   isUpdatingTitle = false;
+  isSavingAll = false;
 
   constructor(private router: Router, 
     private groupService: GroupService, public intl: TranslateService, private hub: HubService
@@ -53,39 +54,43 @@ export class SettingsComponent {
       this.updateSmallGroupTitle();
   }  
   async updateSmallGroupTitle(){
-    if (!this.newGroupTitle)
-      return;    
-
-    if (this.newGroupTitle === this.group.name)
-      return;
-
+    if (this.isUpdatingTitle || !this.newGroupTitle.trim()) return false;
+    if (this.newGroupTitle === this.group.name) return true;
+    const title = this.newGroupTitle.trim();
     this.isUpdatingTitle = true;
-
-    const res = await this.groupService.updateGroupName(this.newGroupTitle);
-
-    if (res?.id){
-      this.group.name = this.newGroupTitle;
-    } else {
-      this.intl.showError(res);
+    try {
+      const res = await this.groupService.updateGroupName(title);
+      if (!res?.id) {
+        this.intl.showError(res);
+        return false;
+      }
+      this.group.name = title;
+      this.editTitleInput?.nativeElement.blur();
+      return true;
+    } finally {
+      this.isUpdatingTitle = false;
     }
-
-    this.editTitleInput.nativeElement.blur();
-    this.isUpdatingTitle = false;    
   }
 
-  async updateSmallGroupTemplate(){    
+  async updateSmallGroupTemplate(){
+    if (this.isUpdatingTitle) return;
     this.isUpdatingTitle = true;
-
-    const res = await this.groupService.updateTemplate(this.group.template);
-    if (!res?.id) this.intl.showError(res);
-
-    this.editTemplateInput.nativeElement.blur();
-    this.isUpdatingTitle = false;    
+    try {
+      const res = await this.groupService.updateTemplate(this.group.template);
+      if (!res?.id) this.intl.showError(res);
+      this.editTemplateInput?.nativeElement.blur();
+    } finally {
+      this.isUpdatingTitle = false;
+    }
   }
 
   async updateAll(){
-    if (this.isUpdatingTitle) return;
-    await this.updateSmallGroupTitle();
-    await this.updateSmallGroupTemplate();
+    if (this.isSavingAll || this.isUpdatingTitle) return;
+    this.isSavingAll = true;
+    try {
+      if (await this.updateSmallGroupTitle()) await this.updateSmallGroupTemplate();
+    } finally {
+      this.isSavingAll = false;
+    }
   }
 }

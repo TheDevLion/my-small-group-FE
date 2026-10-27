@@ -57,7 +57,8 @@ export const baseApiFetch = async (path: string, options: RequestInit = {}) => {
             return {};
         }
 
-        return await response.json();
+        const data = await response.json();
+        return version === sessionVersion ? data : {error: 'unauthorized'};
     }catch(error){
         return { error: "api_unavailable" };
     }

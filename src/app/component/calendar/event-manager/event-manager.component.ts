@@ -67,7 +67,7 @@ export class EventManagerComponent {
   async saveImgs(){
     const input = this.files.nativeElement as HTMLInputElement;
     const files = Array.from(input.files ?? []);
-    let failed = false;
+    let failure: any = null;
     for (const file of files) {
       if (this.uploadedFiles.has(file)) continue;
       const pendingId = this.pendingPublications.get(file);
@@ -78,14 +78,14 @@ export class EventManagerComponent {
         : await this.eventPhotoService.uploadAsset(form, this.event.id);
       if (res?.error || !res?.id) {
         if (res?.id) this.pendingPublications.set(file, res.id);
-        failed = true;
+        failure = res?.error === 'invalid_image' ? res : {error: 'upload_failed'};
         continue;
       }
       this.imgUrls = [...this.imgUrls.filter(x => x.id !== res.id), res];
       this.uploadedFiles.add(file);
       this.pendingPublications.delete(file);
     }
-    if (failed) this.intl.showError({error: 'upload_failed'});
+    if (failure) this.intl.showError(failure);
     else {
       input.value = '';
       this.filesChanged();
