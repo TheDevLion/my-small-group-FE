@@ -84,4 +84,4 @@ To use GitHub Pages:
 
 The API must support the revision-based write contract: GET `/group` returns `updatedAt`; every group update sends that value and adopts the returned revision. A conflict keeps local edits and asks the user to reload instead of overwriting another screen. Deploy this frontend together with the matching backend changes.
 
-Event editor URLs now retain the event ID in the query string. Photo publication can resume after reopening an event. Files are limited to JPEG/PNG/GIF/WebP up to 4 MiB. Participants with attendance records cannot be deleted; legacy missing participants remain visible in the report as “Participante removido”.
+Event editor URLs now retain the event ID in the query string. Failed photo publication can be retried while the upload remains selected. Reopening an event only lists published photos; it never republishes old drafts. Files are limited to JPEG/PNG/GIF/WebP up to 4 MiB. Participants with attendance records cannot be deleted; legacy missing participants remain visible in the report as “Participante removido”.

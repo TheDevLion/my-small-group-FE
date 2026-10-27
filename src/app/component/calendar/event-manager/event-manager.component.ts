@@ -52,11 +52,7 @@ export class EventManagerComponent {
       return;
     }
     this.imgUrls = res;
-    for (const photo of res.filter((p: any) => p.pending)) {
-      const published = await this.eventPhotoService.publishImg(photo.id);
-      if (this.event.id !== eventId) return;
-      if (published?.error) this.intl.showError(published);
-    }
+
   }
 
   filesChanged(){
