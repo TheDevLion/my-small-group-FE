@@ -1,3 +1,4 @@
+import { emptyGroup } from 'src/app/interface/group';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { checkIfLoggedIn, clearSessionState, login, saveSessionState } from 'src/app/helpers/base_request';
@@ -31,6 +32,7 @@ export class LoginComponent {
   }
 
   async loginAttempt(){
+    if (this.isLoading) return;
     this.isLoading = true;
     
     let res = await login(this.passcode);
@@ -49,10 +51,12 @@ export class LoginComponent {
     }
     else{
       this.invalidPasswordMessage = this.intl.translate("success_password");
+      this.groupService.group = structuredClone(emptyGroup);
       saveSessionState(res.groupID);
       if (await this.groupService.init()){
         this.router.navigate(['/settings']);
       }else {
+        this.invalidPasswordMessage = this.intl.translate('api_unavailable');
         clearSessionState();
       }
     }

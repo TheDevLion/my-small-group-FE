@@ -11,6 +11,7 @@ const storage = new Map();
 let response = {ok:true,status:200,json:async()=>({id:"g"})};
 const context = {
   console, structuredClone, FormData, setTimeout, performance,
+  window:{dispatchEvent(){}}, Event,
   confirm: () => true,
   sessionStorage: { getItem: k => storage.get(k), setItem: (k,v) => storage.set(k,v), removeItem: k => storage.delete(k) },
   fetch: async () => response,
@@ -52,6 +53,8 @@ test('Presence removes, adds and reopens without losing changes', () => {
   assert.equal(dialog.presence.join(),'p2');
 });
 
+const api=load('src/app/helpers/base_request.ts');
+api.saveSessionState('g');
 const Group=load('src/app/service/group.service.ts').GroupService;
 const Calendar=component('calendar/events-view/events-view','EventsViewComponent');
 test('Save updates cache, retains previous events and isolates unsaved edits',async()=>{
@@ -84,6 +87,21 @@ test('Photo retries skip successful files and resume publication without reuploa
   }});
   await m.saveImgs(); assert.equal(m.imgUrls.length,1); assert.equal(input.value,'selected');
   await m.saveImgs(); assert.equal(uploads,2); assert.equal(publications,1); assert.equal(m.imgUrls.length,2); assert.equal(input.value,'');
+});
+
+test('Expired session cannot reuse or write previous group cache',async()=>{
+  const service=new Group();service.group={id:'g',name:'G',events:[],participants:[],template:{}};
+  api.clearSessionState();assert.equal(await service.init(),false);assert.equal(service.group.id,'');
+  api.saveSessionState('other');service.group={id:'g',name:'G'};
+  assert.equal((await service.updateEvent([])).error,'unauthorized');
+  response={ok:true,status:200,json:async()=>({id:'other',name:'Other',participants:[],events:[],template:{}})};
+  assert.equal(await service.init(),true);assert.equal(service.group.id,'other');
+  api.saveSessionState('g');response={ok:true,status:200,json:async()=>({id:'g'})};
+});
+test('Login preserves wrong-password response',async()=>{
+  response={ok:false,status:401,json:async()=>({error:'wrong_password'})};
+  assert.equal((await api.login('bad')).error,'wrong_password');
+  api.saveSessionState('g');response={ok:true,status:200,json:async()=>({id:'g'})};
 });
 
 (async()=>{for(const {name,run} of tests){await run(); console.log(`PASS ${name}`)}})().catch(e=>{console.error(e);process.exitCode=1});

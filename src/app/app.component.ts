@@ -1,4 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
+import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { GroupService } from './service/group.service';
+import { emptyGroup } from './interface/group';
 import { TranslateService } from './service/translate.service';
 import { checkIfLoggedIn } from './helpers/base_request';
 
@@ -10,7 +14,14 @@ import { checkIfLoggedIn } from './helpers/base_request';
 export class AppComponent {
   title = 'mySmallGroup';
 
-  constructor(private intl: TranslateService){}
+  constructor(private intl: TranslateService, private groups: GroupService, private router: Router, private dialog: MatDialog){}
+
+  @HostListener('window:session-expired')
+  sessionExpired(){
+    this.groups.group = structuredClone(emptyGroup);
+    this.dialog.closeAll();
+    this.router.navigate(['/']);
+  }
 
   
 

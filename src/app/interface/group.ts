@@ -3,6 +3,7 @@ import { participant } from "./participant";
 
 export interface group {
     id: string;
+    updatedAt?: string;
     name: string;
     participants: participant[];
     events: event[];
