@@ -73,7 +73,11 @@ export class ManageParticipantsComponent {
     this.checkIfParticipantsNeedToBeUpdated();
 
     if (this.isSaving || this.saveButtonClass) return;
-    if (this.participants.some(p => !p.name.trim() || !['leader', 'member', 'guest'].includes(p.role))) {
+    const changed = this.participants.filter(p => {
+      const saved = this.group.participants.find(x => x.id === p.id);
+      return !saved || p.name !== saved.name || p.alias !== saved.alias || p.role !== saved.role;
+    });
+    if (changed.some(p => !p.name.trim() || !['leader', 'member', 'guest'].includes(p.role))) {
       this.intl.showError({error: 'invalid_payload'});
       return;
     }
