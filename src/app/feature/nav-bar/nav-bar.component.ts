@@ -14,10 +14,12 @@ import { HubService } from 'src/app/service/hub.service';
   styleUrls: ['./nav-bar.component.css']
 })
 export class NavBarComponent {
-  activePage = "/settings";
+  get activePage(){
+    const path = this.router.url.split('?')[0];
+    return path === '/calendar_event' ? '/calendar' : path;
+  }
 
   constructor(private router: Router, public dialog: MatDialog, private hub: HubService){
-    this.activePage = `/${location.href.split('/')[location.href.split('/').length - 1]}`;
     
     this.hub.subscribe(OPEN_DIALOG, (args: {component: any, data: any}) => {
 
@@ -48,7 +50,6 @@ export class NavBarComponent {
 
   redirectTo(route: string){
     this.router.navigate([route]);
-    this.activePage = route;
   }  
   ngOnDestroy(){
     this.hub.unsubscribe(this);

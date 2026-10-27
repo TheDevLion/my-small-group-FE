@@ -37,7 +37,9 @@ export class EventsViewComponent {
 
   handleCalendarClick(day: string){
     if(day !== '-'){
-      this.referenceDate = new Date(this.referenceDate.getFullYear(), this.referenceDate.getMonth(), Number(day));
+      const dayNumber = Number(day);
+      if (!Number.isInteger(dayNumber) || dayNumber < 1 || dayNumber > howManyDaysInMonth(this.referenceDate)) return;
+      this.referenceDate = new Date(this.referenceDate.getFullYear(), this.referenceDate.getMonth(), dayNumber);
       const formattedReferenceDate = formatYearMonthDay(this.referenceDate);
       this.dayEvents = this.group.events.filter(x => x.dateStr === formattedReferenceDate);      
     }else {

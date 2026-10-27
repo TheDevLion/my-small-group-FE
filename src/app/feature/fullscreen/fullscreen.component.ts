@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { closeFullScreen, openFullScreen } from 'src/app/helpers/general';
+import { Component, HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-fullscreen',
@@ -7,11 +6,16 @@ import { closeFullScreen, openFullScreen } from 'src/app/helpers/general';
   styleUrls: ['./fullscreen.component.css']
 })
 export class FullscreenComponent {
-  get isFullScreen(){ return !!document.fullscreenElement; }
+  isFullScreen = !!document.fullscreenElement;
+
+  @HostListener('document:fullscreenchange')
+  fullscreenChanged(){
+    this.isFullScreen = !!document.fullscreenElement;
+  }
 
   async toggleFullScreen(){
     try {
-      if (this.isFullScreen) await document.exitFullscreen();
+      if (document.fullscreenElement) await document.exitFullscreen();
       else await document.documentElement.requestFullscreen();
     } catch {
       // Fullscreen may be unavailable or denied by the browser.
