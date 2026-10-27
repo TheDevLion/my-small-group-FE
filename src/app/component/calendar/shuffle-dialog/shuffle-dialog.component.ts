@@ -4,6 +4,7 @@ import { HubService } from 'src/app/service/hub.service';
 import { TranslateService } from 'src/app/service/translate.service';
 
 @Component({
+  standalone: false,
   selector: 'app-shuffle-dialog',
   templateUrl: './shuffle-dialog.component.html',
   styleUrls: ['./shuffle-dialog.component.css']

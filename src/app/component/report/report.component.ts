@@ -7,6 +7,7 @@ import { GroupService } from 'src/app/service/group.service';
 import { TranslateService } from 'src/app/service/translate.service';
 
 @Component({
+  standalone: false,
   selector: 'app-report',
   templateUrl: './report.component.html',
   styleUrls: ['./report.component.css']

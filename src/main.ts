@@ -16,7 +16,7 @@ const normalizeAssetPath = (src: string) => {
 };
 
 const getCurrentMainBundlePath = () => {
-  const script = document.querySelector<HTMLScriptElement>('script[src*="main."]');
+  const script = document.querySelector<HTMLScriptElement>('script[src*="main."], script[src*="main-"]');
   if (!script?.src) {
     return null;
   }
@@ -36,7 +36,7 @@ const getLatestMainBundlePath = async () => {
 
   const html = await response.text();
   const parsed = new DOMParser().parseFromString(html, 'text/html');
-  const script = parsed.querySelector<HTMLScriptElement>('script[src*="main."]');
+  const script = parsed.querySelector<HTMLScriptElement>('script[src*="main."], script[src*="main-"]');
 
   if (!script?.src) {
     return null;

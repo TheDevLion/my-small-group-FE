@@ -6,11 +6,11 @@ Frontend for managing small-group data: participants, events, reports, and setti
 Angular frontend for managing small-group participants, events, and reports with a cookie-based login flow. Connects to a backend API, keeps session state client-side, and deploys to GitHub Pages. Mobile-friendly UI and simple admin workflows.
 
 ## Tech Stack (Important Libraries)
-- Angular 15.1.x (`@angular/core`, `@angular/router`, `@angular/forms`, `@angular/common`, `@angular/platform-browser`)
-- Angular Material 15.2.9 (`@angular/material`, `@angular/cdk`)
+- Angular 20.3.x (`@angular/core`, `@angular/router`, `@angular/forms`, `@angular/common`, `@angular/platform-browser`)
+- Angular Material 20.2.x (`@angular/material`, `@angular/cdk`)
 - RxJS 7.8.x (`rxjs`)
-- Zone.js 0.12.x (`zone.js`)
-- TypeScript 4.9.x (`typescript`)
+- Zone.js 0.15.x (`zone.js`)
+- TypeScript 5.9.x (`typescript`)
 
 ## Overview
 - Single-page app with routes for settings, participants, calendar, event manager, and reports.
@@ -33,12 +33,12 @@ Relevant code:
 - Routes: `src/app/app-routing.module.ts`
 
 ## Requirements
-- Node.js 18+
+- Node.js 22.12+ (22 LTS used in CI)
 - pnpm (recommended)
 
 ## Install
 ```bash
-pnpm install
+pnpm install --frozen-lockfile
 ```
 
 ## Run Locally
@@ -53,7 +53,9 @@ Default dev URL: `http://localhost:4200`
 pnpm run build
 ```
 
-Production build output goes to `docs/` (see `angular.json`).
+Production build output goes to `docs/` (see `angular.json`). The Angular application builder keeps `index.html` directly in that folder for GitHub Pages.
+
+CI uses `npm ci`; `package-lock.json` and `pnpm-lock.yaml` must stay synchronized. After changing dependencies with npm, run `pnpm import` and audit both lockfiles (`npm audit` and `pnpm audit`).
 
 ## Configuration
 Environment files:

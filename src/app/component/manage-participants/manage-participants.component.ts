@@ -7,6 +7,7 @@ import { HubService } from 'src/app/service/hub.service';
 import { TranslateService } from 'src/app/service/translate.service';
 
 @Component({
+  standalone: false,
   selector: 'app-manage-participants',
   templateUrl: './manage-participants.component.html',
   styleUrls: ['./manage-participants.component.css']

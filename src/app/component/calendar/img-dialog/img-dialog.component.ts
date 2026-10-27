@@ -6,6 +6,7 @@ import { HubService } from 'src/app/service/hub.service';
 import { TranslateService } from 'src/app/service/translate.service';
 
 @Component({
+  standalone: false,
   selector: 'app-img-dialog',
   templateUrl: './img-dialog.component.html',
   styleUrls: ['./img-dialog.component.css']

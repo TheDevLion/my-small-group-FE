@@ -7,6 +7,7 @@ import { TranslateService } from './service/translate.service';
 import { checkIfLoggedIn } from './helpers/base_request';
 
 @Component({
+  standalone: false,
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']

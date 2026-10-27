@@ -11,6 +11,7 @@ import { TranslateService } from 'src/app/service/translate.service';
 import { DescriptionDialogComponent } from '../description-dialog/description-dialog.component';
 
 @Component({
+  standalone: false,
   selector: 'app-events-view',
   templateUrl: './events-view.component.html',
   styleUrls: ['./events-view.component.css']

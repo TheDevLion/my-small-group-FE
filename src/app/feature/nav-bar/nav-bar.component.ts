@@ -9,6 +9,7 @@ import { CLOSE_DIALOG, OPEN_DESC_DIALOG, OPEN_DIALOG, OPEN_IMG_DIALOG, OPEN_PRES
 import { HubService } from 'src/app/service/hub.service';
 
 @Component({
+  standalone: false,
   selector: 'app-nav-bar',
   templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.css']

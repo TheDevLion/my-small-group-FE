@@ -17,6 +17,7 @@ import { DescriptionDialogComponent } from '../description-dialog/description-di
 import { PresenceDialogComponent } from '../presence-dialog/presence-dialog.component';
 
 @Component({
+  standalone: false,
   selector: 'app-event-manager',
   templateUrl: './event-manager.component.html',
   styleUrls: ['./event-manager.component.css']

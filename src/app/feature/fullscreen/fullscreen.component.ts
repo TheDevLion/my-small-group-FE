@@ -1,6 +1,7 @@
 import { Component, HostListener } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'app-fullscreen',
   templateUrl: './fullscreen.component.html',
   styleUrls: ['./fullscreen.component.css']
