@@ -19,8 +19,8 @@ export class ShuffleDialogComponent {
   
   constructor(private hub: HubService, public intl: TranslateService){
     this.hub.subscribe(OPEN_SHUFFLE_DIALOG, (args: any) => {
-      this.fontSize = `font-size: ${args["template"]["shuffle_dialog_font_size"]}px`;
-      this.connector = args["template"]["shuffle_connector_word"];
+      this.fontSize = `font-size: ${args["template"]["shuffle_dialog_font_size"] || 16}px`;
+      this.connector = args["template"]["shuffle_connector_word"] || '→';
       this.description = args["desc"].split("\n").map((x: string) => x.split(this.connector));      
     }, this);
   }

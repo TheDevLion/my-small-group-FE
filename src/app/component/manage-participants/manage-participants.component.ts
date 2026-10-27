@@ -61,6 +61,10 @@ export class ManageParticipantsComponent {
   }
 
   deleteParticipant(participant: participant){
+    if (this.group.events.some(e => e.presence.includes(participant.id))) {
+      this.intl.showError({error: 'participant_in_use'});
+      return;
+    }
     this.participants = this.participants.filter(x => x.id !== participant.id);
     this.checkIfParticipantsNeedToBeUpdated();
   }

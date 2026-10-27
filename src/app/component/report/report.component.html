@@ -34,7 +34,7 @@
             <th class="fixed" *ngFor="let event of this.eventsToShow">{{eventDate(event)}}</th>
         </tr>
 
-        <tr *ngFor="let participant of this.group.participants">
+        <tr *ngFor="let participant of participantsToShow">
                 <td class="fixed">{{fullnameFlag ? participant.name : participant.alias}} ({{frequencyStatus(participant)}})</td>
                 <td *ngFor="let event of this.eventsToShow" [class]="participantWasPresentInEvent(participant, event)"></td>
         </tr>

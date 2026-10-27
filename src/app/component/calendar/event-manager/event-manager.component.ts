@@ -165,19 +165,14 @@ export class EventManagerComponent {
     let fDate = formatDayMonthYear(new Date(this.event.dateStr + "T00:00"));
     let desc = `${this.intl.translateWithParams("shuffle_dialog_date_of_shuffle", [fDate])}\n`;
 
-    for(let i = 0; i < this.event.presence.length; i++){
-      if (i < this.event.presence.length - 1){
-        const part = this.group.participants.find(x => x.id === this.event.presence[i])
-        const nextPart = this.group.participants.find(x => x.id === this.event.presence[i + 1]);
-
-        desc += `${part?.role === "guest" ? part?.name + "*" : part?.name} ${this.group.template['shuffle_connector_word']} ${nextPart?.role === "guest" ? nextPart?.name + "*" : nextPart?.name}\n`;
-      }
-      else if (i === this.event.presence.length - 1){
-        const part = this.group.participants.find(x => x.id === this.event.presence[i]);
-        const nextPart = this.group.participants.find(x => x.id === this.event.presence[0]);
-
-        desc += `${part?.role === "guest" ? part?.name + "*" : part?.name} ${this.group.template['shuffle_connector_word']} ${nextPart?.role === "guest" ? nextPart?.name + "*" : nextPart?.name}\n`;
-      }
+    const participants = this.event.presence
+      .map(id => this.group.participants.find(p => p.id === id))
+      .filter((p): p is participant => !!p);
+    for (let i = 0; i < participants.length; i++) {
+      const part = participants[i];
+      const next = participants[(i + 1) % participants.length];
+      const name = (p: participant) => p.name + (p.role === 'guest' ? '*' : '');
+      desc += `${name(part)} ${this.group.template['shuffle_connector_word'] ?? '→'} ${name(next)}\n`;
     }
 
     this.hub.notifyArgs(OPEN_DIALOG, {component: ShuffleDialogComponent, data: {desc: desc, template: this.group.template}});

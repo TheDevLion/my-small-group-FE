@@ -42,6 +42,7 @@ export class TranslateService {
   }
 
   intl: Record<string, Record<string, string>> = {
+    "removed_participant": {"pt-br": "Participante removido", "en-us": "Removed participant"},
     "not_found": {"pt-br": "Este registro não está mais disponível.", "en-us": "This record is no longer available."},
     "invalid_image": {"pt-br": "Use uma imagem JPEG, PNG, GIF ou WebP de até 4 MB.", "en-us": "Use a JPEG, PNG, GIF or WebP image up to 4 MB."},
     "conflict": {"pt-br": "O grupo foi alterado em outra tela. Recarregue antes de salvar novamente.", "en-us": "The group changed in another screen. Reload before saving again."},

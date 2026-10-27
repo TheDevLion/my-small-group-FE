@@ -118,6 +118,12 @@ test('Month navigation refreshes visible events',()=>{
   const c=instance(Calendar,{referenceDate:new Date(2026,9,27),dayEvents:[event('a')],group:{events:[event('a')]},generateCalendarMonthLabels(){}});
   c.addMonth(1);assert.equal(c.dayEvents.length,0);
 });
+test('Frequency filtering and clearing preserve the counting flag and legacy attendance',()=>{
+  const Report=component('report/report','ReportComponent');
+  const r=instance(Report,{group:{events:[event('a'),{...event('b'),frequencyFlag:false}],participants:[]},filterStartDate:'2026-10-01',filterFinalDate:'2026-10-31',intl:{translate:()=> 'Removed participant'}});
+  r.applyFiltersSearch();assert.equal(r.eventsToShow.length,1);assert.equal(r.participantsToShow.length,1);
+  r.filterStartDate='';r.filterFinalDate='';r.applyFiltersSearch();assert.equal(r.eventsToShow.length,1);
+});
 test('Dates reject impossible calendar dates and use local day values',()=>{
   const dates=load('src/app/helpers/date_time.ts');assert.equal(dates.isValidDate('2026-02-30'),false);assert.equal(dates.isValidDate('2024-02-29'),true);
   assert.match(load('src/app/interface/event.ts').createEmptyEvent().dateStr,/^\d{4}-\d{2}-\d{2}$/);

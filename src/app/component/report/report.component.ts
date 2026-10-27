@@ -25,7 +25,7 @@ export class ReportComponent {
   async getGroup(){
     if (await this.groupService.init()){
       this.group = this.groupService.group;
-      this.eventsToShow = structuredClone(this.group.events).filter((x: event) => x.frequencyFlag);
+      this.applyFiltersSearch();
     }
   }
 
@@ -35,7 +35,7 @@ export class ReportComponent {
   }
 
   eventDate(event: event){
-    return formatAbbDayMonthYear(new Date(event.dateStr + " 00:00"));
+    return formatAbbDayMonthYear(new Date(event.dateStr + "T00:00:00"));
   }
 
   participantWasPresentInEvent(participant: participant, event: event){
@@ -46,9 +46,27 @@ export class ReportComponent {
   }
 
   applyFiltersSearch(){
-    if (isStrDateWindowValid(this.filterStartDate, this.filterFinalDate)){
-      this.eventsToShow = this.group.events.filter(x => x.dateStr >= this.filterStartDate && x.dateStr <= this.filterFinalDate)
+    if ((this.filterStartDate || this.filterFinalDate) && !isStrDateWindowValid(this.filterStartDate, this.filterFinalDate)) {
+      this.intl.showError({error: 'invalid_payload'});
+      return;
     }
+    this.eventsToShow = this.group.events.filter(x => x.frequencyFlag &&
+      (!this.filterStartDate || (x.dateStr >= this.filterStartDate && x.dateStr <= this.filterFinalDate)));
+  }
+
+  get participantsToShow(): participant[]{
+    const participants = [...this.group.participants];
+    const known = new Set(participants.map(p => p.id));
+    for (const event of this.eventsToShow) {
+      for (const id of event.presence) {
+        if (!known.has(id)) {
+          const name = this.intl.translate('removed_participant');
+          participants.push({id, name, alias: name, role: 'guest'});
+          known.add(id);
+        }
+      }
+    }
+    return participants;
   }
 
   participantPresentAtLeastOnce(participant: participant){
