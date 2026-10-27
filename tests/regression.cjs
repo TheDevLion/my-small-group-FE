@@ -12,6 +12,7 @@ let response = {ok:true,status:200,json:async()=>({id:"g"})};
 const context = {
   console, structuredClone, FormData, setTimeout, performance,
   window:{dispatchEvent(){}}, Event,
+  document:{fullscreenElement:null,documentElement:{requestFullscreen:async()=>{context.document.fullscreenElement={}}},exitFullscreen:async()=>{context.document.fullscreenElement=null}},
   confirm: () => true,
   sessionStorage: { getItem: k => storage.get(k), setItem: (k,v) => storage.set(k,v), removeItem: k => storage.delete(k) },
   fetch: async () => response,
@@ -127,6 +128,12 @@ test('Frequency filtering and clearing preserve the counting flag and legacy att
 test('Dates reject impossible calendar dates and use local day values',()=>{
   const dates=load('src/app/helpers/date_time.ts');assert.equal(dates.isValidDate('2026-02-30'),false);assert.equal(dates.isValidDate('2024-02-29'),true);
   assert.match(load('src/app/interface/event.ts').createEmptyEvent().dateStr,/^\d{4}-\d{2}-\d{2}$/);
+});
+
+test('Fullscreen uses browser state including external exit',async()=>{
+  const Fullscreen=load('src/app/feature/fullscreen/fullscreen.component.ts').FullscreenComponent;const screen=new Fullscreen();
+  assert.equal(screen.isFullScreen,false);await screen.toggleFullScreen();assert.equal(screen.isFullScreen,true);
+  context.document.fullscreenElement=null;assert.equal(screen.isFullScreen,false);await screen.toggleFullScreen();await screen.toggleFullScreen();assert.equal(screen.isFullScreen,false);
 });
 
 (async()=>{for(const {name,run} of tests){await run(); console.log(`PASS ${name}`)}})().catch(e=>{console.error(e);process.exitCode=1});

@@ -7,15 +7,14 @@ import { closeFullScreen, openFullScreen } from 'src/app/helpers/general';
   styleUrls: ['./fullscreen.component.css']
 })
 export class FullscreenComponent {
-  isFullScreen = true;
+  get isFullScreen(){ return !!document.fullscreenElement; }
 
-  toggleFullScreen(){
-    if (this.isFullScreen)
-      closeFullScreen();
-    else
-      openFullScreen();
-
-    this.isFullScreen = !this.isFullScreen;
+  async toggleFullScreen(){
+    try {
+      if (this.isFullScreen) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch {
+      // Fullscreen may be unavailable or denied by the browser.
+    }
   }
-
 }
