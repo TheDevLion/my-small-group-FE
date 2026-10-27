@@ -46,8 +46,16 @@ export class EventManagerComponent {
     if (!this.group.events.some(x => x.id === eventId)) return;
     const res = await this.eventPhotoService.getEventPhotos(eventId);
     if (this.event.id !== eventId) return;
-    if (res?.error) this.intl.showError(res);
-    else this.imgUrls = res;
+    if (res?.error) {
+      this.intl.showError(res);
+      return;
+    }
+    this.imgUrls = res;
+    for (const photo of res.filter((p: any) => p.pending)) {
+      const published = await this.eventPhotoService.publishImg(photo.id);
+      if (this.event.id !== eventId) return;
+      if (published?.error) this.intl.showError(published);
+    }
   }
 
   filesChanged(){
