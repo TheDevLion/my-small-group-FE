@@ -100,6 +100,7 @@ export class EventManagerComponent {
   async getGroup(id: string | null, day: string | null){
     const version = ++this.loadVersion;
     this.isLoading = true;
+    this.dialog.closeAll();
     this.group = structuredClone(emptyGroup);
     this.event = createEmptyEvent();
     this.imgUrls = [];
@@ -203,12 +204,14 @@ export class EventManagerComponent {
 
   openDescriptionModal(){
     if (this.isLoading || this.isSaving) return;
-    this.hub.notifyArgs(OPEN_DIALOG, {component: DescriptionDialogComponent, data: {desc: this.event.description, updateDesc: (desc: string) => {this.event.description = desc}}});
+    const event = this.event;
+    this.hub.notifyArgs(OPEN_DIALOG, {component: DescriptionDialogComponent, data: {desc: event.description, updateDesc: (desc: string) => {event.description = desc}}});
   }
 
   openPresenceModal(){
     if (this.isLoading || this.isSaving) return;
-    this.hub.notifyArgs(OPEN_DIALOG, {component: PresenceDialogComponent, data: {presence: this.event.presence, participants: this.group.participants, updatePresence: (presence: string[]) => {this.event.presence = presence}}});
+    const event = this.event;
+    this.hub.notifyArgs(OPEN_DIALOG, {component: PresenceDialogComponent, data: {presence: event.presence, participants: this.group.participants, updatePresence: (presence: string[]) => {event.presence = presence}}});
   }
   ngOnDestroy(){
     this.destroyed = true;
