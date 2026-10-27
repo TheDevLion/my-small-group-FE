@@ -20,7 +20,7 @@ export class ShuffleDialogComponent {
   constructor(private hub: HubService, public intl: TranslateService){
     this.hub.subscribe(OPEN_SHUFFLE_DIALOG, (args: any) => {
       const size = Number(args.template['shuffle_dialog_font_size']);
-      this.fontSize = Number.isFinite(size) && size >= 8 && size <= 96 ? size : 16;
+      this.fontSize = Number.isFinite(size) && size > 0 ? size : 16;
       this.connector = args["template"]["shuffle_connector_word"] || '→';
       this.description = args.rows;
     }, this);
