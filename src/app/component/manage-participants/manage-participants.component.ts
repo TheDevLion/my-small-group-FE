@@ -68,11 +68,18 @@ export class ManageParticipantsComponent {
   async saveParticipants(){
     this.checkIfParticipantsNeedToBeUpdated();
 
-    if (!this.saveButtonClass){
-      this.isSaving = true;
+    if (this.isSaving || this.saveButtonClass) return;
+    if (this.participants.some(p => !p.name.trim() || !['leader', 'member', 'guest'].includes(p.role))) {
+      this.intl.showError({error: 'invalid_payload'});
+      return;
+    }
+    this.isSaving = true;
+    try {
       const res = await this.groupService.updateGroupParticipants(this.participants);
+      if (!res?.id) this.intl.showError(res);
+      this.checkIfParticipantsNeedToBeUpdated();
+    } finally {
       this.isSaving = false;
-      this.saveButtonClass = "button_disabled";
     }
   }
 }

@@ -31,7 +31,7 @@ export class EventManagerComponent {
   
   constructor(public groupService: GroupService, public router: Router, public intl: TranslateService, private hub: HubService, public dialog: MatDialog, private eventPhotoService: EventphotoService){
     this.hub.subscribe(EDIT_EVENT, (args: event) => {
-      this.event = args
+      this.event = structuredClone(args);
       this.getImgs();
     });
     this.hub.subscribe(CLOSE_SHUFFLE_DIALOG, () => this.dialog.closeAll());
@@ -67,30 +67,26 @@ export class EventManagerComponent {
   }  
   
   async saveEvent(){
-    debugger;
-    if (!this.isButtonDisabled()){
-      this.hub.notify(CLOSE_SHUFFLE_DIALOG);
-      this.isSaving = true;
-      let newEventsList = structuredClone(this.group.events) ?? [];
-  
-      if (!newEventsList.find((x: event) => x.id === this.event.id)){
-        newEventsList.push(this.event);
-        newEventsList = newEventsList.sort((a: event, b:  event) => a.dateStr > b.dateStr ? 1 : -1);
+    if (this.isButtonDisabled()) return;
+    this.hub.notify(CLOSE_SHUFFLE_DIALOG);
+    this.isSaving = true;
+    try {
+      const newEventsList = this.group.events.filter(x => x.id !== this.event.id);
+      newEventsList.push(structuredClone(this.event));
+      newEventsList.sort((a, b) => a.dateStr.localeCompare(b.dateStr));
+      const res = await this.groupService.updateEvent(newEventsList);
+      if (!res?.id) {
+        this.intl.showError(res);
+        return;
       }
-  
-      await this.groupService.updateEvent(newEventsList);
-
       await this.saveImgs();
-
+    } finally {
       this.isSaving = false;
     }
   }
-  
+
   isButtonDisabled(){
-    if (this.event.title && this.event.dateStr)
-      return false;
-    
-    return true;
+    return this.isSaving || !this.event.title.trim() || !/^\d{4}-\d{2}-\d{2}$/.test(this.event.dateStr);
   }
 
   returnPage(){

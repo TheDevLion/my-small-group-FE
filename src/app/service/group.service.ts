@@ -21,10 +21,10 @@ export class GroupService {
           return false;
         }
 
-        const sortedParticipants = res.participants.filter((x: participant) => x.role === "leader").sort((a: participant, b: participant) => a.name > b.name ? 1 : -1)
-        .concat(res.participants.filter((x: participant) => x.role === "member").sort((a: participant, b: participant) => a.name > b.name ? 1 : -1))
-        .concat(res.participants.filter((x: participant) => x.role === "guest").sort((a: participant, b: participant) => a.name > b.name ? 1 : -1));        
-        res.participants = sortedParticipants;
+        const roles = ['leader', 'member', 'guest'];
+        res.participants.sort((a: participant, b: participant) =>
+          (roles.indexOf(a.role) < 0 ? 3 : roles.indexOf(a.role)) -
+          (roles.indexOf(b.role) < 0 ? 3 : roles.indexOf(b.role)) || a.name.localeCompare(b.name));
         
         this.group = res;
       }
@@ -42,34 +42,42 @@ export class GroupService {
   }
 
   async updateGroupName(name: string){
+    const saved = structuredClone(name);
     const res = await baseApiFetch("/group/name", {
       method: "PUT",
-      body: JSON.stringify({ name: name }),
+      body: JSON.stringify({ name: saved }),
     });
+    if (res?.id) this.group.name = saved;
     return res;
   }
 
   async updateGroupParticipants(participants: participant[]){
+    const saved = structuredClone(participants);
     const res = await baseApiFetch("/group/participants", {
       method: "PUT",
-      body: JSON.stringify({ participants: participants }),
+      body: JSON.stringify({ participants: saved }),
     });
+    if (res?.id) this.group.participants = saved;
     return res;
   }
 
   async updateEvent(events: event[]){
+    const saved = structuredClone(events);
     const res = await baseApiFetch("/group/events", {
       method: "PUT",
-      body: JSON.stringify({ events: events }),
+      body: JSON.stringify({ events: saved }),
     });
+    if (res?.id) this.group.events = saved;
     return res;
   }
 
   async updateTemplate(template: Record<string, any>){
+    const saved = structuredClone(template);
     const res = await baseApiFetch("/group/template", {
       method: "PUT",
-      body: JSON.stringify({ template: template }),
+      body: JSON.stringify({ template: saved }),
     });
+    if (res?.id) this.group.template = saved;
     return res;
   }
 }

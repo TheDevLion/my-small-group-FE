@@ -12,6 +12,6 @@ export const createEmptyParticipant = () => {
         id: uuidv4(),
         name: "",
         alias: "",
-        role: "",
+        role: "member",
     }
 }

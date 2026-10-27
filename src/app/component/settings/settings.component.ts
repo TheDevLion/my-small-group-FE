@@ -31,7 +31,7 @@ export class SettingsComponent {
 
   async getGroup(){
     if (await this.groupService.init()){
-      this.group = this.groupService.group;
+      this.group = structuredClone(this.groupService.group);
       this.newGroupTitle = this.group.name;
     }
   }
@@ -65,6 +65,8 @@ export class SettingsComponent {
 
     if (res?.id){
       this.group.name = this.newGroupTitle;
+    } else {
+      this.intl.showError(res);
     }
 
     this.editTitleInput.nativeElement.blur();
@@ -74,13 +76,15 @@ export class SettingsComponent {
   async updateSmallGroupTemplate(){    
     this.isUpdatingTitle = true;
 
-    await this.groupService.updateTemplate(this.group.template);
+    const res = await this.groupService.updateTemplate(this.group.template);
+    if (!res?.id) this.intl.showError(res);
 
     this.editTemplateInput.nativeElement.blur();
     this.isUpdatingTitle = false;    
   }
 
   async updateAll(){
+    if (this.isUpdatingTitle) return;
     await this.updateSmallGroupTitle();
     await this.updateSmallGroupTemplate();
   }

@@ -35,7 +35,19 @@ export class TranslateService {
     this.language = language;
   }
 
-  intl: Record<string, Record<string, string>> = {    
+  showError(result: any){
+    const key = ['conflict', 'invalid_payload', 'participant_in_use', 'upload_failed', 'unauthorized', 'publication_failed'].includes(result?.error)
+      ? result.error : 'api_unavailable';
+    alert(this.translate(key));
+  }
+
+  intl: Record<string, Record<string, string>> = {
+    "conflict": {"pt-br": "O grupo foi alterado em outra tela. Recarregue antes de salvar novamente.", "en-us": "The group changed in another screen. Reload before saving again."},
+    "invalid_payload": {"pt-br": "Confira os campos obrigatórios e os valores informados.", "en-us": "Check required fields and entered values."},
+    "participant_in_use": {"pt-br": "Este participante possui presenças registradas e não pode ser excluído.", "en-us": "This participant has attendance records and cannot be deleted."},
+    "upload_failed": {"pt-br": "Algumas fotos não foram enviadas. Salve novamente para tentar apenas as pendentes.", "en-us": "Some photos were not uploaded. Save again to retry pending photos only."},
+    "unauthorized": {"pt-br": "Sua sessão expirou. Entre novamente.", "en-us": "Your session expired. Please log in again."},
+    "publication_failed": {"pt-br": "Não foi possível publicar. Recarregue e confira os dados antes de tentar novamente.", "en-us": "Publication failed. Reload and check the data before retrying."},    
     "login_password": {
       "pt-br": "Senha: ",
       "en-us": "Password: ",

@@ -124,8 +124,11 @@ export class EventsViewComponent {
   async deleteEvent(event: event){    
     if (confirm(this.intl.translateWithParams("alert_confirm_delete_event", [event.dateStr]))){
       const newEventsList = this.group.events.filter(x => x.id !== event.id);
-      await this.groupService.updateEvent(newEventsList);
-      this.group.events = newEventsList;
+      const res = await this.groupService.updateEvent(newEventsList);
+      if (!res?.id) {
+        this.intl.showError(res);
+        return;
+      }
       this.handleCalendarClick(this.referenceDate.getDate().toString());
     }
   }
