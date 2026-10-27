@@ -80,9 +80,7 @@ To use GitHub Pages:
 - Icons: https://fonts.google.com/icons
 
 
-## Regression checks
-
-Run `npm run test:regression` for the attendance, persistence, upload, session, navigation and report checks. These execute the TypeScript methods with external services simulated; they do not replace browser testing. `npm run build` checks Angular templates and the production bundle.
+## Updated API contract
 
 The API must support the revision-based write contract: GET `/group` returns `updatedAt`; every group update sends that value and adopts the returned revision. A conflict keeps local edits and asks the user to reload instead of overwriting another screen. Deploy this frontend together with the matching backend changes.
 
