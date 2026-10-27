@@ -78,3 +78,12 @@ To use GitHub Pages:
 
 ## UI Notes
 - Icons: https://fonts.google.com/icons
+
+
+## Regression checks
+
+Run `npm run test:regression` for the attendance, persistence, upload, session, navigation and report checks. These execute the TypeScript methods with external services simulated; they do not replace browser testing. `npm run build` checks Angular templates and the production bundle.
+
+The API must support the revision-based write contract: GET `/group` returns `updatedAt`; every group update sends that value and adopts the returned revision. A conflict keeps local edits and asks the user to reload instead of overwriting another screen. Deploy this frontend together with the matching backend changes.
+
+Event editor URLs now retain the event ID in the query string. Photo publication can resume after reopening an event. Files are limited to JPEG/PNG/GIF/WebP up to 4 MiB. Participants with attendance records cannot be deleted; legacy missing participants remain visible in the report as “Participante removido”.
