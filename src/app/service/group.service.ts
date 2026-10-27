@@ -9,15 +9,17 @@ import { event } from '../interface/event';
 })
 export class GroupService {
   group: group = structuredClone(emptyGroup);
-  private loading?: Promise<boolean>;
+  private loading?: {version: number, promise: Promise<boolean>};
   
   constructor() {}
 
   async init(){
-    if (this.loading) return this.loading;
-    this.loading = this.loadGroup();
-    try { return await this.loading; }
-    finally { this.loading = undefined; }
+    const version = getSessionVersion();
+    if (this.loading?.version === version) return this.loading.promise;
+    const pending = {version, promise: this.loadGroup()};
+    this.loading = pending;
+    try { return await pending.promise; }
+    finally { if (this.loading === pending) this.loading = undefined; }
   }
 
   private async loadGroup(){

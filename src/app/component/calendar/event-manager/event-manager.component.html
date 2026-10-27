@@ -9,17 +9,17 @@
 <section id="event_form">
     <div class="event_form_line">
         <label>{{intl.translate("events_manager_title")}}</label>
-        <input type="text" [(ngModel)]="event.title"/>
+        <input type="text" [(ngModel)]="event.title" [disabled]="isLoading || isSaving"/>
     </div>
 
     <div class="event_form_line">
         <label>{{intl.translate("events_manager_date")}}</label>
-        <input type="date" [(ngModel)]="event.dateStr"/>
+        <input type="date" [(ngModel)]="event.dateStr" [disabled]="isLoading || isSaving"/>
     </div>
 
     <div class="event_form_line">
-        <button (click)="openDescriptionModal()">{{intl.translate("events_manager_description")}}</button>
-        <button (click)="openPresenceModal()">{{intl.translate("events_manager_presence")}}</button>        
+        <button [disabled]="isLoading || isSaving" (click)="openDescriptionModal()">{{intl.translate("events_manager_description")}}</button>
+        <button [disabled]="isLoading || isSaving" (click)="openPresenceModal()">{{intl.translate("events_manager_presence")}}</button>        
     </div>
 
     <div class="shuffle_line">
@@ -34,12 +34,12 @@
 
 
     <div class="event_form_line">
-        <input type="file" multiple accept="image/jpeg,image/png,image/gif,image/webp" [disabled]="isSaving" (change)="filesChanged()" class="upload_files_input" #files/>
+        <input type="file" multiple accept="image/jpeg,image/png,image/gif,image/webp" [disabled]="isLoading || isSaving" (change)="filesChanged()" class="upload_files_input" #files/>
     </div>
 
     <div class="shuffle_line">
         <label>{{intl.translate("event_manager_frequency_flag")}}</label>
-        <input type="checkbox" [(ngModel)]="event.frequencyFlag"/>
+        <input type="checkbox" [(ngModel)]="event.frequencyFlag" [disabled]="isLoading || isSaving"/>
     </div>
 
 </section>

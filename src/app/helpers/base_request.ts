@@ -72,8 +72,7 @@ export const login = async (payload: string) => {
 }
 
 export const logout = async () => {
-    await baseApiFetch("/logout", {
-        method: "POST",
-    });
+    const request = baseApiFetch("/logout", {method: "POST"});
     clearSessionState();
+    await request;
 }

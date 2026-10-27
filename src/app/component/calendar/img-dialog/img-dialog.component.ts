@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import {  CLOSE_DIALOG, CLOSE_IMG_DIALOG_DELETE, OPEN_IMG_DIALOG } from 'src/app/events';
 import { EventphotoService } from 'src/app/service/eventphoto.service';
 import { HubService } from 'src/app/service/hub.service';
@@ -18,7 +19,7 @@ export class ImgDialogComponent {
     this.hub.notify(CLOSE_DIALOG);
   }
 
-  constructor(private hub: HubService, public intl: TranslateService, private eventPhotoService: EventphotoService){
+  constructor(private hub: HubService, public intl: TranslateService, private eventPhotoService: EventphotoService, private dialogRef: MatDialogRef<ImgDialogComponent>){
     this.hub.subscribe(OPEN_IMG_DIALOG, (args: any) => {
       this.imgUrl = args.imgUrl;
       this.imgId = args.imgId;
@@ -30,8 +31,10 @@ export class ImgDialogComponent {
     this.isDeleting = true;
     try {
       const res = await this.eventPhotoService.deleteImg(this.imgId);
-      if (res?.id) this.hub.notifyArgs(CLOSE_IMG_DIALOG_DELETE, [this.imgId]);
-      else this.intl.showError(res);
+      if (res?.id) {
+        this.hub.notifyArgs(CLOSE_IMG_DIALOG_DELETE, [this.imgId]);
+        this.dialogRef.close();
+      } else this.intl.showError(res);
     } finally {
       this.isDeleting = false;
     }
