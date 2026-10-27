@@ -41,13 +41,16 @@ export class NavBarComponent {
       }
       this.dialog.open(args.component, {width: '350px'});
       this.hub.notifyArgs(event, args.data);
-    });
+    }, this);
 
-    this.hub.subscribe(CLOSE_DIALOG, () => this.dialog.closeAll());
+    this.hub.subscribe(CLOSE_DIALOG, () => this.dialog.closeAll(), this);
   }
 
   redirectTo(route: string){
     this.router.navigate([route]);
     this.activePage = route;
   }  
+  ngOnDestroy(){
+    this.hub.unsubscribe(this);
+  }
 }

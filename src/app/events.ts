@@ -37,6 +37,7 @@ export const CLOSE_DIALOG = "CLOSE_DIALOG";
 
 
 export interface HubEvent {
+    owner: object;
     eventId: string;
     function: Function;
     args?: any;

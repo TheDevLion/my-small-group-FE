@@ -24,7 +24,7 @@ export class PresenceDialogComponent {
       this.presence = [...args.presence];
       this.updatePresence = args.updatePresence;
       this.participants = args.participants;
-    });
+    }, this);
   }
 
   toggleFlagName() {
@@ -46,5 +46,8 @@ export class PresenceDialogComponent {
       this.presence.push(participant.id);
 
     this.updatePresence([...this.presence]);
+  }
+  ngOnDestroy(){
+    this.hub.unsubscribe(this);
   }
 }

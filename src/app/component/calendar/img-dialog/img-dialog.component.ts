@@ -22,7 +22,7 @@ export class ImgDialogComponent {
     this.hub.subscribe(OPEN_IMG_DIALOG, (args: any) => {
       this.imgUrl = args.imgUrl;
       this.imgId = args.imgId;
-    });
+    }, this);
   }
 
   async deleteImg(){
@@ -35,5 +35,8 @@ export class ImgDialogComponent {
     } finally {
       this.isDeleting = false;
     }
+  }
+  ngOnDestroy(){
+    this.hub.unsubscribe(this);
   }
 }

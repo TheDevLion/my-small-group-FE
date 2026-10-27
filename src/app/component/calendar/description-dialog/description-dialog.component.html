@@ -8,7 +8,7 @@
 
     <section class="dialog_content">
         <!-- YOUR CONTENT GOES IN HERE -->
-        <textarea [(ngModel)]="description" #textarea (change)="updateDesc(description)" [disabled]="disabledTextarea"></textarea>
+        <textarea [(ngModel)]="description" #textarea (ngModelChange)="updateDesc && updateDesc($event)" [disabled]="disabledTextarea"></textarea>
     </section>
 
 </div>

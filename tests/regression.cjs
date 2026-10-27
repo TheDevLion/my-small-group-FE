@@ -59,7 +59,7 @@ const Group=load('src/app/service/group.service.ts').GroupService;
 const Calendar=component('calendar/events-view/events-view','EventsViewComponent');
 test('Save updates cache, retains previous events and isolates unsaved edits',async()=>{
   const service=new Group(); service.group={id:'g',name:'G',events:[],participants:[],template:{}};
-  const m=instance(Manager,{group:service.group,event:event('a'),hub:{notify(){}},groupService:service,saveImgs:async()=>{},intl:{showError(){throw Error('unexpected failure')}}});
+  const m=instance(Manager,{group:service.group,event:event('a'),hub:{notify(){}},groupService:service,router:{navigate:async()=>true},saveImgs:async()=>{},intl:{showError(){throw Error('unexpected failure')}}});
   await m.saveEvent(); assert.equal(service.group.events[0].id,'a');
   m.event.title='unsaved'; assert.equal(service.group.events[0].title,'a');
   m.event=event('b'); await m.saveEvent(); assert.equal(service.group.events.length,2);
@@ -71,7 +71,7 @@ test('Failed event writes retain cache and skip uploads',async()=>{
   response={ok:false,status:502,json:async()=>({error:'api_unavailable'})};
   const service=new Group(); service.group={id:'g',name:'G',events:[event('a')],participants:[],template:{}};
   let uploaded=false, errors=0;
-  const m=instance(Manager,{group:service.group,event:event('b'),hub:{notify(){}},groupService:service,saveImgs:async()=>{uploaded=true},intl:{showError(){errors++}}});
+  const m=instance(Manager,{group:service.group,event:event('b'),hub:{notify(){}},groupService:service,router:{navigate:async()=>true},saveImgs:async()=>{uploaded=true},intl:{showError(){errors++}}});
   await m.saveEvent(); assert.equal(uploaded,false); assert.equal(service.group.events.length,1); assert.equal(m.isSaving,false);
   const c=instance(Calendar,{group:service.group,groupService:service,intl:{translateWithParams:()=>'',showError(){errors++}}});
   await c.deleteEvent(event('a')); assert.equal(service.group.events.length,1); assert.equal(errors,2);
@@ -102,6 +102,25 @@ test('Login preserves wrong-password response',async()=>{
   response={ok:false,status:401,json:async()=>({error:'wrong_password'})};
   assert.equal((await api.login('bad')).error,'wrong_password');
   api.saveSessionState('g');response={ok:true,status:200,json:async()=>({id:'g'})};
+});
+
+test('Hub releases destroyed owners without removing other subscribers',()=>{
+  const Hub=load('src/app/service/hub.service.ts').HubService;const hub=new Hub();
+  const a={},b={};let calls=0;hub.subscribe('open',()=>calls++,a);hub.subscribe('open',()=>calls++,b);
+  hub.unsubscribe(a);hub.notify('open');assert.equal(calls,1);hub.unsubscribe(b);assert.equal(hub.events.length,0);
+});
+test('Editor reload loads a copy of the event identified by the URL',async()=>{
+  const group={id:'g',events:[event('a')]};
+  const m=instance(Manager,{groupService:{init:async()=>true,group},route:{snapshot:{queryParamMap:{get:k=>k==='id'?'a':null}}},getImgs:async()=>{},intl:{showError(){throw Error('unexpected error')}}});
+  await m.getGroup();assert.equal(m.event.id,'a');m.event.title='unsaved';assert.equal(group.events[0].title,'a');assert.equal(m.isLoading,false);
+});
+test('Month navigation refreshes visible events',()=>{
+  const c=instance(Calendar,{referenceDate:new Date(2026,9,27),dayEvents:[event('a')],group:{events:[event('a')]},generateCalendarMonthLabels(){}});
+  c.addMonth(1);assert.equal(c.dayEvents.length,0);
+});
+test('Dates reject impossible calendar dates and use local day values',()=>{
+  const dates=load('src/app/helpers/date_time.ts');assert.equal(dates.isValidDate('2026-02-30'),false);assert.equal(dates.isValidDate('2024-02-29'),true);
+  assert.match(load('src/app/interface/event.ts').createEmptyEvent().dateStr,/^\d{4}-\d{2}-\d{2}$/);
 });
 
 (async()=>{for(const {name,run} of tests){await run(); console.log(`PASS ${name}`)}})().catch(e=>{console.error(e);process.exitCode=1});

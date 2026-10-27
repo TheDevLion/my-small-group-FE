@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EDIT_EVENT, OPEN_DESC_DIALOG, RETURN_EDIT_EVENT_PAGE, OPEN_DIALOG } from 'src/app/events';
-import { firstDayOfMonth, formatDayMonthYear, formatMonthYear, formatYearMonthDay, howManyDaysInMonth, isItToday } from 'src/app/helpers/date_time';
+import { firstDayOfMonth, formatDayMonthYear, formatMonthYear, formatYearMonthDay, howManyDaysInMonth, isItToday, isValidDate } from 'src/app/helpers/date_time';
 import { createEmptyEvent, event } from 'src/app/interface/event';
 import { emptyGroup, group } from 'src/app/interface/group';
 import { GroupService } from 'src/app/service/group.service';
@@ -22,19 +22,13 @@ export class EventsViewComponent {
   daysLabels: string[] = [];
   formatMonthYear = formatMonthYear;
   
-  constructor(public intl: TranslateService, private router: Router, private groupService: GroupService, private hub: HubService, public dialog: MatDialog){
+  constructor(public intl: TranslateService, private router: Router, private groupService: GroupService, private hub: HubService, public dialog: MatDialog, private route: ActivatedRoute){
+    const day = this.route.snapshot.queryParamMap.get('date');
+    if (day && isValidDate(day)) this.referenceDate = new Date(day + 'T00:00:00');
     this.getGroup();
     this.generateCalendarMonthLabels();
     this.handleCalendarClick(this.referenceDate.getDate().toString());
     
-    this.hub.subscribe(RETURN_EDIT_EVENT_PAGE, (args: string) => {      
-      if (!args.includes(":")){
-        this.referenceDate = new Date(args + " 00:00");
-        this.generateCalendarMonthLabels();
-        setTimeout(() => this.handleCalendarClick(this.referenceDate.getDate().toString()), 50);
-      }
-      
-    });
   }
 
   formatTitleDate(){
@@ -88,6 +82,7 @@ export class EventsViewComponent {
   addMonth(flag: number){
     this.referenceDate = new Date(this.referenceDate.getFullYear(), this.referenceDate.getMonth() + flag, 1);
     this.generateCalendarMonthLabels();
+    this.handleCalendarClick('1');
   }
 
   isItReferenceDay(day: string){    
@@ -109,16 +104,12 @@ export class EventsViewComponent {
     return false;
   }
 
-  addNewEvent(){    
-    const emptyEvent = createEmptyEvent();
-    emptyEvent.dateStr = formatYearMonthDay(this.referenceDate);
-    setTimeout(() => this.hub.notifyArgs(EDIT_EVENT, emptyEvent), 50);
-    this.router.navigate(["/calendar_event"]);
+  addNewEvent(){
+    this.router.navigate(['/calendar_event'], {queryParams: {date: formatYearMonthDay(this.referenceDate)}});
   }
 
   editEvent(event: event){
-    setTimeout(() => this.hub.notifyArgs(EDIT_EVENT, event), 50);
-    this.router.navigate(["/calendar_event"]);
+    this.router.navigate(['/calendar_event'], {queryParams: {id: event.id}});
   }
 
   async deleteEvent(event: event){    
@@ -143,4 +134,7 @@ export class EventsViewComponent {
     })
   }
 
+  ngOnDestroy(){
+    this.hub.unsubscribe(this);
+  }
 }

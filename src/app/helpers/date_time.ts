@@ -27,15 +27,11 @@ export const isItToday = (day: string, date: Date) => {
     return day === date.getDate().toString();
 }
 
-export const isStrDateWindowValid = (date1: string, date2: string) => {
-    if (!date1 || date1.length !== 10 || !date1.includes("-"))
-        return false;
+export const isValidDate = (value: string) => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+    const date = new Date(value + 'T00:00:00');
+    return !Number.isNaN(date.getTime()) && formatYearMonthDay(date) === value;
+};
 
-    if (!date2 || date2.length !== 10 || !date2.includes("-"))
-        return false;
-    
-    if (date1 > date2)
-        return false;
-    
-    return true;
-}
+export const isStrDateWindowValid = (date1: string, date2: string) =>
+    isValidDate(date1) && isValidDate(date2) && date1 <= date2;

@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CLOSE_IMG_DIALOG_DELETE, CLOSE_SHUFFLE_DIALOG, EDIT_EVENT, OPEN_DESC_DIALOG, OPEN_DIALOG, OPEN_IMG_DIALOG, OPEN_PRESENCE_DIALOG, OPEN_SHUFFLE_DIALOG, RETURN_EDIT_EVENT_PAGE } from 'src/app/events';
 import { createEmptyEvent, event } from 'src/app/interface/event';
 import { emptyGroup, group } from 'src/app/interface/group';
@@ -9,7 +9,7 @@ import { HubService } from 'src/app/service/hub.service';
 import { TranslateService } from 'src/app/service/translate.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ShuffleDialogComponent } from '../shuffle-dialog/shuffle-dialog.component';
-import { formatDayMonthYear } from 'src/app/helpers/date_time';
+import { formatDayMonthYear, isValidDate } from 'src/app/helpers/date_time';
 import { EventphotoService } from 'src/app/service/eventphoto.service';
 import { ImgDialogComponent } from '../img-dialog/img-dialog.component';
 import { DescriptionDialogComponent } from '../description-dialog/description-dialog.component';
@@ -26,17 +26,18 @@ export class EventManagerComponent {
   group: group = emptyGroup;
   event: event = createEmptyEvent();  
   isSaving = false;
+  isLoading = true;
   shuffleViewOrUpdate = false;  
   imgUrls: {id: string, url: string}[] = [];
   uploadedFiles = new Set<File>();
   pendingPublications = new Map<File, string>();
   
-  constructor(public groupService: GroupService, public router: Router, public intl: TranslateService, private hub: HubService, public dialog: MatDialog, private eventPhotoService: EventphotoService){
-    this.hub.subscribe(EDIT_EVENT, (args: event) => {
-      this.event = structuredClone(args);
-      this.getImgs();
-    });
-    this.hub.subscribe(CLOSE_SHUFFLE_DIALOG, () => this.dialog.closeAll());
+  constructor(public groupService: GroupService, public router: Router, public intl: TranslateService, private hub: HubService, public dialog: MatDialog, private eventPhotoService: EventphotoService, private route: ActivatedRoute){
+    this.hub.subscribe(CLOSE_SHUFFLE_DIALOG, () => this.dialog.closeAll(), this);
+    this.hub.subscribe(CLOSE_IMG_DIALOG_DELETE, (data: string[]) => {
+      this.imgUrls = this.imgUrls.filter(x => x.id !== data[0]);
+      this.dialog.closeAll();
+    }, this);
     this.getGroup();
   }
   
@@ -92,11 +93,31 @@ export class EventManagerComponent {
   }
 
   async getGroup(){
-    if (await this.groupService.init()){
+    try {
+      if (!await this.groupService.init()) {
+        this.intl.showError({error: 'api_unavailable'});
+        return;
+      }
       this.group = this.groupService.group;
+      const id = this.route.snapshot.queryParamMap.get('id');
+      if (id) {
+        const saved = this.group.events.find(e => e.id === id);
+        if (!saved) {
+          this.intl.showError({error: 'not_found'});
+          this.router.navigate(['/calendar']);
+          return;
+        }
+        this.event = structuredClone(saved);
+      } else {
+        const day = this.route.snapshot.queryParamMap.get('date');
+        if (day && isValidDate(day)) this.event.dateStr = day;
+      }
+      await this.getImgs();
+    } finally {
+      this.isLoading = false;
     }
-  }  
-  
+  }
+
   async saveEvent(){
     if (this.isButtonDisabled()) return;
     this.hub.notify(CLOSE_SHUFFLE_DIALOG);
@@ -110,6 +131,7 @@ export class EventManagerComponent {
         this.intl.showError(res);
         return;
       }
+      await this.router.navigate(['/calendar_event'], {queryParams: {id: this.event.id}, replaceUrl: true});
       await this.saveImgs();
     } finally {
       this.isSaving = false;
@@ -117,13 +139,13 @@ export class EventManagerComponent {
   }
 
   isButtonDisabled(){
-    return this.isSaving || !this.event.title.trim() || !/^\d{4}-\d{2}-\d{2}$/.test(this.event.dateStr);
+    return this.isLoading || this.isSaving || !this.group.id || !this.event.title.trim() || !isValidDate(this.event.dateStr);
   }
 
   returnPage(){
-    setTimeout(() => this.hub.notifyArgs(RETURN_EDIT_EVENT_PAGE, this.event.dateStr), 50);
-    this.hub.notify(CLOSE_SHUFFLE_DIALOG);
-    this.router.navigate(['/calendar']);
+    if (this.isSaving) return;
+    this.dialog.closeAll();
+    this.router.navigate(['/calendar'], {queryParams: {date: this.event.dateStr}});
   }
 
   shuffleParticipants(){    
@@ -163,10 +185,7 @@ export class EventManagerComponent {
 
   async openImgModal(img: any){
     this.hub.notifyArgs(OPEN_DIALOG, {component: ImgDialogComponent, data: {imgUrl: img.url, imgId: img.id}});
-    this.hub.subscribe(CLOSE_IMG_DIALOG_DELETE, (data: any[]) => {
-      this.imgUrls = this.imgUrls.filter((x: any) => x.id !== data[0]);
-      this.dialog.closeAll();
-    });
+
   }
 
   openDescriptionModal(){
@@ -175,5 +194,8 @@ export class EventManagerComponent {
 
   openPresenceModal(){
     this.hub.notifyArgs(OPEN_DIALOG, {component: PresenceDialogComponent, data: {presence: this.event.presence, participants: this.group.participants, updatePresence: (presence: string[]) => {this.event.presence = presence}}});
+  }
+  ngOnDestroy(){
+    this.hub.unsubscribe(this);
   }
 }

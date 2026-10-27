@@ -22,15 +22,16 @@ export class DescriptionDialogComponent {
     this.hub.subscribe(OPEN_DESC_DIALOG, (args: any) => {
       this.description = args.desc;
       setTimeout(() => {        
-        this.textarea.nativeElement.scrollTo(0, 0);
-        this.textarea.nativeElement.blur();
+        this.textarea?.nativeElement.scrollTo(0, 0);
+        this.textarea?.nativeElement.blur();
       }, 250);
 
-      if(!args.updateDesc)
-        this.disabledTextarea = true;
-      else
-        this.updateDesc = args.updateDesc;
-    });
+      this.disabledTextarea = !args.updateDesc;
+      this.updateDesc = args.updateDesc;
+    }, this);
 
+  }
+  ngOnDestroy(){
+    this.hub.unsubscribe(this);
   }
 }

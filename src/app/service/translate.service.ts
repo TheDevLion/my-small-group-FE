@@ -36,12 +36,14 @@ export class TranslateService {
   }
 
   showError(result: any){
-    const key = ['conflict', 'invalid_payload', 'participant_in_use', 'upload_failed', 'unauthorized', 'publication_failed'].includes(result?.error)
+    const key = ['conflict', 'invalid_payload', 'participant_in_use', 'upload_failed', 'unauthorized', 'publication_failed', 'invalid_image', 'not_found'].includes(result?.error)
       ? result.error : 'api_unavailable';
     alert(this.translate(key));
   }
 
   intl: Record<string, Record<string, string>> = {
+    "not_found": {"pt-br": "Este registro não está mais disponível.", "en-us": "This record is no longer available."},
+    "invalid_image": {"pt-br": "Use uma imagem JPEG, PNG, GIF ou WebP de até 4 MB.", "en-us": "Use a JPEG, PNG, GIF or WebP image up to 4 MB."},
     "conflict": {"pt-br": "O grupo foi alterado em outra tela. Recarregue antes de salvar novamente.", "en-us": "The group changed in another screen. Reload before saving again."},
     "invalid_payload": {"pt-br": "Confira os campos obrigatórios e os valores informados.", "en-us": "Check required fields and entered values."},
     "participant_in_use": {"pt-br": "Este participante possui presenças registradas e não pode ser excluído.", "en-us": "This participant has attendance records and cannot be deleted."},

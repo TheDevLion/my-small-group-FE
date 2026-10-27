@@ -22,7 +22,10 @@ export class ShuffleDialogComponent {
       this.fontSize = `font-size: ${args["template"]["shuffle_dialog_font_size"]}px`;
       this.connector = args["template"]["shuffle_connector_word"];
       this.description = args["desc"].split("\n").map((x: string) => x.split(this.connector));      
-    });
+    }, this);
   }
 
+  ngOnDestroy(){
+    this.hub.unsubscribe(this);
+  }
 }

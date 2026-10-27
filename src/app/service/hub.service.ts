@@ -10,9 +10,13 @@ export class HubService {
   constructor() {
   }
 
-  subscribe(event: string, f: Function){
-      let ev: HubEvent = {eventId: event, function: f};
+  subscribe(event: string, f: Function, owner: object){
+      let ev: HubEvent = {eventId: event, function: f, owner};
       this.events.push(ev);    
+  }
+
+  unsubscribe(owner: object){
+    this.events = this.events.filter(x => x.owner !== owner);
   }
 
   notify(event: string){

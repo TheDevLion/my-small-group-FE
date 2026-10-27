@@ -1,3 +1,4 @@
+import { formatYearMonthDay } from "../helpers/date_time";
 import { uuidv4 } from "../helpers/general";
 import { participant } from "./participant";
 
@@ -14,7 +15,7 @@ export interface event {
 export const createEmptyEvent = () => {
     return {
         id: uuidv4(),
-        dateStr: new Date().toISOString(),
+        dateStr: formatYearMonthDay(new Date()),
         title: "",
         description: "",        
         presence: [],
