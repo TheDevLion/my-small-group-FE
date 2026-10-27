@@ -180,7 +180,7 @@ export class EventManagerComponent {
       this.event.presence = shuffle(this.event.presence);
     
     let fDate = formatDayMonthYear(new Date(this.event.dateStr + "T00:00"));
-    let desc = `${this.intl.translateWithParams("shuffle_dialog_date_of_shuffle", [fDate])}\n`;
+    const rows: string[][] = [[this.intl.translateWithParams("shuffle_dialog_date_of_shuffle", [fDate])]];
 
     const participants = this.event.presence
       .map(id => this.group.participants.find(p => p.id === id))
@@ -189,10 +189,10 @@ export class EventManagerComponent {
       const part = participants[i];
       const next = participants[(i + 1) % participants.length];
       const name = (p: participant) => p.name + (p.role === 'guest' ? '*' : '');
-      desc += `${name(part)} ${this.group.template['shuffle_connector_word'] ?? '→'} ${name(next)}\n`;
+      rows.push([name(part), name(next)]);
     }
 
-    this.hub.notifyArgs(OPEN_DIALOG, {component: ShuffleDialogComponent, data: {desc: desc, template: this.group.template}});
+    this.hub.notifyArgs(OPEN_DIALOG, {component: ShuffleDialogComponent, data: {rows, template: this.group.template}});
   }
 
   async openImgModal(img: any){

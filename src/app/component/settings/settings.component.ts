@@ -73,7 +73,7 @@ export class SettingsComponent {
   }
 
   async updateSmallGroupTemplate(){
-    if (this.isUpdatingTitle) return;
+    if (this.isUpdatingTitle || JSON.stringify(this.group.template) === JSON.stringify(this.groupService.group.template)) return;
     this.isUpdatingTitle = true;
     try {
       const res = await this.groupService.updateTemplate(this.group.template);

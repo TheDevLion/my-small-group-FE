@@ -6,10 +6,10 @@
     </header>
     
 
-    <section class="dialog_content">
+    <section class="dialog_content" [style.font-size.px]="fontSize">
         <!-- YOUR CONTENT GOES IN HERE -->
         <p *ngFor="let row of description">
-            <span *ngIf="row.length === 1">{{row}}</span>
+            <span *ngIf="row.length === 1">{{row[0]}}</span>
             <span *ngIf="row.length === 0"></span>
             <span *ngIf="row.length === 2">
                 <b>{{row[0]}}</b>

@@ -9,8 +9,8 @@ import { TranslateService } from 'src/app/service/translate.service';
   styleUrls: ['./shuffle-dialog.component.css']
 })
 export class ShuffleDialogComponent {
-  description = "";
-  fontSize = "16 px";
+  description: string[][] = [];
+  fontSize = 16;
   connector = "";
 
   closeDialog(){
@@ -19,9 +19,10 @@ export class ShuffleDialogComponent {
   
   constructor(private hub: HubService, public intl: TranslateService){
     this.hub.subscribe(OPEN_SHUFFLE_DIALOG, (args: any) => {
-      this.fontSize = `font-size: ${args["template"]["shuffle_dialog_font_size"] || 16}px`;
+      const size = Number(args.template['shuffle_dialog_font_size']);
+      this.fontSize = Number.isFinite(size) && size >= 8 && size <= 96 ? size : 16;
       this.connector = args["template"]["shuffle_connector_word"] || '→';
-      this.description = args["desc"].split("\n").map((x: string) => x.split(this.connector));      
+      this.description = args.rows;
     }, this);
   }
 
